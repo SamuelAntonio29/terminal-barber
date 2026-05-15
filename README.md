@@ -215,22 +215,22 @@ Este projeto foi desenvolvido para fins acadêmicos.
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="screenshots/tela_incial_app.png" width="180"/>
-  <img src="screenshots/tela_cad_app.png" width="180"/>
-  <img src="screenshots/tela_cliente_login_pelo_google_nao_vem_numero_app.png" width="180"/>
-  <img src="screenshots/tela_cliente_cartao_fidelidade_app.png" width="180"/>
+  <img src="screenshots/tela_incial_app.jpg" width="180"/>
+  <img src="screenshots/tela_cad_app.jpg" width="180"/>
+  <img src="screenshots/tela_cliente_login_pelo-google_nao-vem-numero_app.jpg" width="180"/>
+  <img src="screenshots/tela_cliente_cartao_fidelidade_app.jpg" width="180"/>
 </p>
 
 <p align="center">
-  <img src="screenshots/novo_agendamento_app.png" width="180"/>
-  <img src="screenshots/horarios_e_resumo_agendamento_app.png" width="180"/>
-  <img src="screenshots/notificacao_app.png" width="180"/>
-  <img src="screenshots/tela_agendamentos_userdono_app.png" width="180"/>
+  <img src="screenshots/novo_agendamento_app.jpg" width="180"/>
+  <img src="screenshots/horarios_e_resumo_agendamento_app.jpg" width="180"/>
+  <img src="screenshots/notificacao_app.jpg" width="180"/>
+  <img src="screenshots/tela_agendamentos_userdono_app.jpg" width="180"/>
 </p>
 
 <p align="center">
-  <img src="screenshots/confirmar_cancelar_dono_app.png" width="180"/>
-  <img src="screenshots/marcar_atendido_dono_app.png" width="180"/>
-  <img src="screenshots/tela_clientes_user_dono_app.png" width="180"/>
-  <img src="screenshots/tela_rec_senha_app.png" width="180"/>
+  <img src="screenshots/confirmar_cancelar_dono_app.jpg" width="180"/>
+  <img src="screenshots/marcar_atendido_dono_app.jpg" width="180"/>
+  <img src="screenshots/tela_clientes_userdono_app.jpg" width="180"/>
+  <img src="screenshots/tela_rec_senha_app.jpg" width="180"/>
 </p>
