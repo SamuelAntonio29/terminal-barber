@@ -203,7 +203,7 @@ agendamentos/
 ---
 
 ## 👨‍💻 Desenvolvedores
-
+Caio Cardoso e Samuel Antonio
 Desenvolvido como projeto final do curso de **GTI 2026**.
 
 ---
