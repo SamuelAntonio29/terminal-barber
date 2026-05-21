@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'verificacao_email.dart';
 import 'main.dart';
-import 'home_cliente.dart';
 import 'app_bar_custom.dart';
 
 class Registro extends StatefulWidget {
@@ -39,7 +38,6 @@ class _RegistroState extends State<Registro> {
     super.dispose();
   }
 
-  // ── Cadastro e-mail/senha ──
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
@@ -95,15 +93,13 @@ class _RegistroState extends State<Registro> {
     }
   }
 
-  // ── Cadastro com Google ──
   Future<void> _cadastroGoogle() async {
     setState(() => _googleLoading = true);
 
     try {
-      final googleSignIn2 = GoogleSignIn();
-      await googleSignIn2.signOut();
-
-      final googleUser = await googleSignIn2.signIn();
+      final googleSignIn = GoogleSignIn();
+      await googleSignIn.signOut();
+      final googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
         setState(() => _googleLoading = false);
         return;
@@ -120,7 +116,6 @@ class _RegistroState extends State<Registro> {
       );
       final user = userCredential.user!;
 
-      // Cria documento só se for novo usuário
       final docRef = FirebaseFirestore.instance
           .collection('usuarios')
           .doc(user.uid);
@@ -130,7 +125,7 @@ class _RegistroState extends State<Registro> {
         await docRef.set({
           'nome': user.displayName ?? '',
           'email': user.email ?? '',
-          'telefone': '',
+          'telefone': '', // vazio — badge vai aparecer
           'role': 'client',
           'criadoEm': DateTime.now().millisecondsSinceEpoch,
           'totalAtendidos': 0,
@@ -142,21 +137,12 @@ class _RegistroState extends State<Registro> {
 
       if (!mounted) return;
 
-      // Google já verifica o e-mail, vai direto para home
       final tela = await telaParaUsuario(user.uid);
       if (!mounted) return;
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => tela),
         (r) => false,
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('✅ Conta criada com Google com sucesso!'),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-        ),
       );
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
@@ -236,7 +222,6 @@ class _RegistroState extends State<Registro> {
                 ),
                 const SizedBox(height: 24),
 
-                // ── CARD FORMULÁRIO ──
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
@@ -267,40 +252,91 @@ class _RegistroState extends State<Registro> {
                               : null,
                         ),
                         const SizedBox(height: 16),
-                        _field(
-                          _telefoneController,
-                          'Telefone / WhatsApp',
-                          Icons.phone_outlined,
-                          textColor,
-                          hintColor,
-                          borderColor,
-                          gold,
-                          keyboardType: TextInputType.phone,
-                          validator: (v) => (v == null || v.trim().isEmpty)
-                              ? 'Informe seu telefone'
-                              : null,
+
+                        // ── Telefone com aviso ──
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _field(
+                              _telefoneController,
+                              'Telefone / WhatsApp',
+                              Icons.phone_outlined,
+                              textColor,
+                              hintColor,
+                              borderColor,
+                              gold,
+                              keyboardType: TextInputType.phone,
+                              validator: (v) => (v == null || v.trim().isEmpty)
+                                  ? 'Informe seu telefone'
+                                  : null,
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.notifications_outlined,
+                                  size: 13,
+                                  color: hintColor,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Necessário para receber lembretes de agendamento.',
+                                  style: TextStyle(
+                                    color: hintColor,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 16),
-                        _field(
-                          _emailController,
-                          'E-mail',
-                          Icons.email_outlined,
-                          textColor,
-                          hintColor,
-                          borderColor,
-                          gold,
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (v) {
-                            if (v == null || v.trim().isEmpty)
-                              return 'Informe o e-mail';
-                            if (!RegExp(
-                              r'^[\w-.]+@([\w-]+\.)+[\w]{2,4}$',
-                            ).hasMatch(v.trim()))
-                              return 'E-mail inválido';
-                            return null;
-                          },
+
+                        // ── E-mail com aviso ──
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _field(
+                              _emailController,
+                              'E-mail',
+                              Icons.email_outlined,
+                              textColor,
+                              hintColor,
+                              borderColor,
+                              gold,
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (v) {
+                                if (v == null || v.trim().isEmpty)
+                                  return 'Informe o e-mail';
+                                if (!RegExp(
+                                  r'^[\w-.]+@([\w-]+\.)+[\w]{2,4}$',
+                                ).hasMatch(v.trim()))
+                                  return 'E-mail inválido';
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.mark_email_read_outlined,
+                                  size: 13,
+                                  color: hintColor,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Use um e-mail existente — enviaremos um link de verificação.',
+                                  style: TextStyle(
+                                    color: hintColor,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 16),
+
                         _field(
                           _passwordController,
                           'Senha',
@@ -329,6 +365,7 @@ class _RegistroState extends State<Registro> {
                           },
                         ),
                         const SizedBox(height: 16),
+
                         _field(
                           _confirmController,
                           'Confirmar senha',
@@ -359,7 +396,6 @@ class _RegistroState extends State<Registro> {
                         ),
                         const SizedBox(height: 28),
 
-                        // Botão criar conta
                         SizedBox(
                           width: double.infinity,
                           height: 52,
@@ -394,8 +430,6 @@ class _RegistroState extends State<Registro> {
                         ),
 
                         const SizedBox(height: 16),
-
-                        // Divisor
                         Row(
                           children: [
                             Expanded(child: Divider(color: borderColor)),
@@ -414,10 +448,8 @@ class _RegistroState extends State<Registro> {
                             Expanded(child: Divider(color: borderColor)),
                           ],
                         ),
-
                         const SizedBox(height: 16),
 
-                        // Botão Google
                         SizedBox(
                           width: double.infinity,
                           height: 52,

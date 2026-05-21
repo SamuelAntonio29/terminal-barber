@@ -39,14 +39,60 @@ class HomeCliente extends StatelessWidget {
             ),
             onPressed: () => MyApp.of(context)?.toggleTheme(),
           ),
-          IconButton(
-            icon: const Icon(Icons.person_outline),
-            tooltip: 'Meu perfil',
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const PerfilCliente()),
-            ),
+
+          // ── Botão perfil com badge de notificação ──
+          StreamBuilder<DocumentSnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('usuarios')
+                .doc(user?.uid)
+                .snapshots(),
+            builder: (context, snap) {
+              final data = snap.data?.data() as Map?;
+              final telefone = data?['telefone'] as String? ?? '';
+              final semTelefone = telefone.trim().isEmpty;
+
+              return Stack(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.person_outline),
+                    tooltip: 'Meu perfil',
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const PerfilCliente()),
+                    ),
+                  ),
+                  // Sininho vermelho se não tiver telefone
+                  if (semTelefone)
+                    Positioned(
+                      right: 6,
+                      top: 6,
+                      child: GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const PerfilCliente(),
+                          ),
+                        ),
+                        child: Container(
+                          width: 14,
+                          height: 14,
+                          decoration: const BoxDecoration(
+                            color: Colors.redAccent,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.priority_high,
+                            color: Colors.white,
+                            size: 10,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
           ),
+
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
@@ -87,7 +133,80 @@ class HomeCliente extends StatelessWidget {
                   color: textColor,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
+
+              // ── Banner de perfil incompleto ──
+              StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('usuarios')
+                    .doc(user?.uid)
+                    .snapshots(),
+                builder: (context, snap) {
+                  final data = snap.data?.data() as Map?;
+                  final telefone = data?['telefone'] as String? ?? '';
+                  if (telefone.trim().isNotEmpty)
+                    return const SizedBox.shrink();
+
+                  return GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const PerfilCliente()),
+                    ),
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.orange.withOpacity(0.5),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.notifications_active_outlined,
+                            color: Colors.orange,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Complete seu perfil!',
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'Adicione seu telefone para receber lembretes dos agendamentos.',
+                                  style: TextStyle(
+                                    color: Colors.orange.withOpacity(0.8),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(
+                            Icons.chevron_right,
+                            color: Colors.orange,
+                            size: 20,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
 
               // ── CARTÃO FIDELIDADE ──
               StreamBuilder<DocumentSnapshot>(
@@ -112,7 +231,7 @@ class HomeCliente extends StatelessWidget {
                 },
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               Text(
                 'Seus agendamentos',
                 style: TextStyle(
@@ -280,27 +399,21 @@ class _CartaoFidelidade extends StatelessWidget {
               return Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 3),
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 36,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: preenchido ? gold : gold.withOpacity(0.12),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: gold.withOpacity(0.4)),
-                        ),
-                        child: Icon(
-                          preenchido
-                              ? Icons.content_cut
-                              : Icons.content_cut_outlined,
-                          color: preenchido
-                              ? Colors.black
-                              : gold.withOpacity(0.4),
-                          size: 18,
-                        ),
-                      ),
-                    ],
+                  child: Container(
+                    height: 36,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: preenchido ? gold : gold.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: gold.withOpacity(0.4)),
+                    ),
+                    child: Icon(
+                      preenchido
+                          ? Icons.content_cut
+                          : Icons.content_cut_outlined,
+                      color: preenchido ? Colors.black : gold.withOpacity(0.4),
+                      size: 18,
+                    ),
                   ),
                 ),
               );
@@ -319,9 +432,7 @@ class _CartaoFidelidade extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// CARD DE AGENDAMENTO
-// ─────────────────────────────────────────────────────────────────
+// ── CARD DE AGENDAMENTO ──
 class AgendamentoCard extends StatelessWidget {
   final AgendamentoModel ag;
   final Color cardColor, textColor, hintColor, gold;
@@ -454,7 +565,6 @@ class AgendamentoCard extends StatelessWidget {
             ),
           ),
 
-          // Info do cliente (owner)
           if (isOwner) ...[
             const SizedBox(height: 6),
             Row(
@@ -476,7 +586,6 @@ class AgendamentoCard extends StatelessWidget {
             ),
           ],
 
-          // Botões do owner
           if (isOwner && ag.status == 'pendente') ...[
             const SizedBox(height: 12),
             Row(
@@ -514,7 +623,6 @@ class AgendamentoCard extends StatelessWidget {
             ),
           ],
 
-          // Botão "Marcar como Atendido" — só aparece se confirmado
           if (isOwner && ag.status == 'confirmado') ...[
             const SizedBox(height: 12),
             SizedBox(
@@ -534,7 +642,6 @@ class AgendamentoCard extends StatelessWidget {
             ),
           ],
 
-          // Botão cancelar do cliente
           if (!isOwner && ag.status == 'pendente') ...[
             const SizedBox(height: 12),
             SizedBox(
