@@ -24,6 +24,9 @@ class _LoginState extends State<Login> {
   bool _isGoogleLoading = false;
   bool _obscure = true;
 
+  // Instância única do GoogleSignIn
+  final _googleSignIn = GoogleSignIn();
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -31,7 +34,6 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
 
-  // ── Login e-mail/senha ──
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
@@ -78,18 +80,21 @@ class _LoginState extends State<Login> {
     }
   }
 
-  // ── Login com Google ──
   Future<void> _loginGoogle() async {
+    if (_isGoogleLoading) return;
     setState(() => _isGoogleLoading = true);
 
     try {
-      final googleSignIn = GoogleSignIn();
-      await googleSignIn.signOut();
+      // Desconecta sessão anterior para forçar seleção de conta
+      if (await _googleSignIn.isSignedIn()) {
+        await _googleSignIn.disconnect();
+      }
 
-      final googleUser = await googleSignIn.signIn();
+      final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        setState(() => _isGoogleLoading = false);
-        return; // usuário cancelou
+        // Usuário cancelou
+        if (mounted) setState(() => _isGoogleLoading = false);
+        return;
       }
 
       final googleAuth = await googleUser.authentication;
@@ -103,12 +108,11 @@ class _LoginState extends State<Login> {
       );
       final user = userCredential.user!;
 
-      // Salva/atualiza documento no Firestore se for primeiro acesso
+      // Cria documento se for primeiro acesso
       final docRef = FirebaseFirestore.instance
           .collection('usuarios')
           .doc(user.uid);
       final doc = await docRef.get();
-
       if (!doc.exists) {
         await docRef.set({
           'nome': user.displayName ?? '',
@@ -137,7 +141,11 @@ class _LoginState extends State<Login> {
       _showSnackBar(_mapError(e.code));
     } catch (e) {
       if (!mounted) return;
-      _showSnackBar('Erro ao entrar com Google: ${e.toString()}');
+      // Ignora erro de cancelamento pelo usuário
+      if (!e.toString().contains('sign_in_canceled') &&
+          !e.toString().contains('network_error')) {
+        _showSnackBar('Erro ao entrar com Google: ${e.toString()}');
+      }
     } finally {
       if (mounted) setState(() => _isGoogleLoading = false);
     }
@@ -193,7 +201,6 @@ class _LoginState extends State<Login> {
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
             child: Column(
               children: [
-                // ── LOGO ──
                 Image.asset(
                   'assets/images/logo.png',
                   width: 160,
@@ -215,7 +222,6 @@ class _LoginState extends State<Login> {
                 ),
                 const SizedBox(height: 28),
 
-                // ── CARD FORMULÁRIO ──
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
@@ -233,7 +239,6 @@ class _LoginState extends State<Login> {
                     key: _formKey,
                     child: Column(
                       children: [
-                        // E-mail
                         TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
@@ -251,7 +256,6 @@ class _LoginState extends State<Login> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Senha
                         TextFormField(
                           controller: _passwordController,
                           obscureText: _obscure,
@@ -279,7 +283,6 @@ class _LoginState extends State<Login> {
                         ),
                         const SizedBox(height: 10),
 
-                        // Esqueceu senha
                         Align(
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
@@ -303,7 +306,6 @@ class _LoginState extends State<Login> {
                         ),
                         const SizedBox(height: 24),
 
-                        // Botão entrar
                         SizedBox(
                           width: double.infinity,
                           height: 52,
@@ -338,8 +340,6 @@ class _LoginState extends State<Login> {
                         ),
 
                         const SizedBox(height: 16),
-
-                        // Divisor
                         Row(
                           children: [
                             Expanded(child: Divider(color: borderColor)),
@@ -358,10 +358,8 @@ class _LoginState extends State<Login> {
                             Expanded(child: Divider(color: borderColor)),
                           ],
                         ),
-
                         const SizedBox(height: 16),
 
-                        // Botão Google
                         SizedBox(
                           width: double.infinity,
                           height: 52,
@@ -414,8 +412,6 @@ class _LoginState extends State<Login> {
                 ),
 
                 const SizedBox(height: 20),
-
-                // Link criar conta
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
