@@ -279,11 +279,15 @@ class _RegistroState extends State<Registro> {
                                   color: hintColor,
                                 ),
                                 const SizedBox(width: 4),
-                                Text(
-                                  'Necessário para receber lembretes de agendamento.',
-                                  style: TextStyle(
-                                    color: hintColor,
-                                    fontSize: 11,
+                                Expanded(
+                                  child: Text(
+                                    'Necessário para receber lembretes de agendamento.',
+                                    style: TextStyle(
+                                      color: hintColor,
+                                      fontSize: 11,
+                                    ),
+                                    overflow: TextOverflow.visible,
+                                    softWrap: true,
                                   ),
                                 ),
                               ],
@@ -324,11 +328,15 @@ class _RegistroState extends State<Registro> {
                                   color: hintColor,
                                 ),
                                 const SizedBox(width: 4),
-                                Text(
-                                  'Use um e-mail existente — enviaremos um link de verificação.',
-                                  style: TextStyle(
-                                    color: hintColor,
-                                    fontSize: 11,
+                                Expanded(
+                                  child: Text(
+                                    'Use um e-mail existente — enviaremos um link de verificação.',
+                                    style: TextStyle(
+                                      color: hintColor,
+                                      fontSize: 11,
+                                    ),
+                                    overflow: TextOverflow.visible,
+                                    softWrap: true,
                                   ),
                                 ),
                               ],
