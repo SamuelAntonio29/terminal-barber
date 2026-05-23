@@ -214,23 +214,27 @@ Este projeto foi desenvolvido para fins acadêmicos.
 
 ## 📸 Screenshots
 
+### 🔐 Autenticação
 <p align="center">
-  <img src="screenshots/tela_incial_app.jpg" width="180"/>
-  <img src="screenshots/tela_cad_app.jpg" width="180"/>
-  <img src="screenshots/tela_cliente_login_pelo-google_nao-vem-numero_app.jpg" width="180"/>
-  <img src="screenshots/tela_cliente_cartao_fidelidade_app.jpg" width="180"/>
+  <img src="screenshots/01_login.jpg" width="180"/>
+  <img src="screenshots/02_recuperar_senha.jpg" width="180"/>
+  <img src="screenshots/03_cadastro.jpg" width="180"/>
 </p>
 
+### 👤 Área do Cliente
 <p align="center">
-  <img src="screenshots/novo_agendamento_app.jpg" width="180"/>
-  <img src="screenshots/horarios_e_resumo_agendamento_app.jpg" width="180"/>
-  <img src="screenshots/notificacao_app.jpg" width="180"/>
-  <img src="screenshots/tela_agendamentos_userdono_app.jpg" width="180"/>
+  <img src="screenshots/04_home_cliente_badge_perfil.jpg" width="180"/>
+  <img src="screenshots/05_perfil_cliente.jpg" width="180"/>
+  <img src="screenshots/06_novo_agendamento.jpg" width="180"/>
+</p>
+<p align="center">
+  <img src="screenshots/07_horarios_resumo.jpg" width="180"/>
+  <img src="screenshots/08_notificacao_lembrete.jpg" width="180"/>
 </p>
 
+### 🏠 Painel do Proprietário
 <p align="center">
-  <img src="screenshots/confirmar_cancelar_dono_app.jpg" width="180"/>
-  <img src="screenshots/marcar_atendido_dono_app.jpg" width="180"/>
-  <img src="screenshots/tela_clientes_userdono_app.jpg" width="180"/>
-  <img src="screenshots/tela_rec_senha_app.jpg" width="180"/>
+  <img src="screenshots/09_owner_confirmar_cancelar.jpg" width="180"/>
+  <img src="screenshots/10_owner_todos_agendamentos.jpg" width="180"/>
+  <img src="screenshots/11_owner_clientes.jpg" width="180"/>
 </p>
