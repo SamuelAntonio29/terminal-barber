@@ -16,6 +16,20 @@
   <img src="https://img.shields.io/badge/Status-Concluído-brightgreen" />
 </p>
 
+## 🌐 Acesso Web (iOS e navegadores)
+
+O app também está disponível via navegador, permitindo uso no **iPhone e iPad** sem precisar da App Store.
+
+🔗 **Acesse aqui:** https://barber-986c1.web.app
+
+**Para adicionar na tela inicial do iPhone:**
+1. Abra o link no **Safari**
+2. Toque no botão de **Compartilhar** (quadrado com seta)
+3. Toque em **"Adicionar à Tela de Início"**
+4. Toque em **"Adicionar"**
+
+O app vai aparecer na tela inicial igual a um app nativo! 📱
+
 ---
 
 ## 📱 Sobre o Projeto
